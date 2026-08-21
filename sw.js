@@ -1,4 +1,4 @@
-const CACHE_NAME = 'huebrand-v20';
+const CACHE_NAME = 'huebrand-v22';
 
 const ASSETS = [
   './',
@@ -11,9 +11,11 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
-    })
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        return cache.addAll(ASSETS);
+      })
   );
 
   self.skipWaiting();
@@ -21,13 +23,21 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      );
-    })
+    caches
+      .keys()
+      .then((keys) => {
+        return Promise.all(
+          keys
+            .filter(
+              (key) =>
+                key !== CACHE_NAME
+            )
+            .map(
+              (key) =>
+                caches.delete(key)
+            )
+        );
+      })
   );
 
   self.clients.claim();
@@ -35,47 +45,59 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const request = e.request;
-  const url = new URL(request.url);
 
-  // External logo/image services should go directly to the network.
-  // We do not want the PWA service worker caching broken third-party logos.
-  if (url.origin !== self.location.origin) {
+  if (
+    request.method !== 'GET'
+  ) {
     return;
   }
 
-  // NETWORK FIRST
-  //
-  // This is better while you are actively developing the game on GitHub
-  // because new versions of index.html and app.js are picked up immediately.
-  //
-  // If there is no internet connection, the PWA falls back to the cache.
+  const url =
+    new URL(request.url);
 
+  // Do not intercept Brandfetch or other
+  // third-party image/API requests.
+  if (
+    url.origin !==
+    self.location.origin
+  ) {
+    return;
+  }
+
+  // Network first for our GitHub Pages files.
+  // This makes new app.js/index.html versions
+  // show up much faster after you upload them.
   e.respondWith(
     fetch(request)
-      .then((networkResponse) => {
+      .then(
+        (networkResponse) => {
+          if (
+            networkResponse.ok
+          ) {
+            const responseCopy =
+              networkResponse.clone();
 
-        if (
-          request.method === 'GET' &&
-          networkResponse.ok
-        ) {
-          const responseCopy =
-            networkResponse.clone();
-
-          caches
-            .open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(
-                request,
-                responseCopy
+            caches
+              .open(CACHE_NAME)
+              .then(
+                (cache) => {
+                  cache.put(
+                    request,
+                    responseCopy
+                  );
+                }
               );
-            });
+          }
+
+          return networkResponse;
         }
-
-        return networkResponse;
-      })
-
-      .catch(() => {
-        return caches.match(request);
-      })
+      )
+      .catch(
+        () => {
+          return caches.match(
+            request
+          );
+        }
+      )
   );
 });
