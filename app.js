@@ -1,99 +1,91 @@
 const BRANDS = [
-  // Fast Food & Dining (1-15)
-  { name: "McDonald's", slug: "mcdonalds", colors: ["#DA291C", "#FFC72C"] },
-  { name: "Burger King", slug: "burgerking", colors: ["#D62300", "#FBE122", "#502314"] },
-  { name: "Subway", slug: "subway", colors: ["#008C15", "#FFC600"] },
-  { name: "Taco Bell", slug: "tacobell", colors: ["#702082", "#A77BCA", "#000000"] },
-  { name: "KFC", slug: "kfc", colors: ["#A3080C", "#000000", "#FFFFFF"] },
-  { name: "Pizza Hut", slug: "pizzahut", colors: ["#EE3124", "#00A859", "#FFC425"] },
-  { name: "Domino's", slug: "dominos", colors: ["#006491", "#E31837"] },
-  { name: "Starbucks", slug: "starbucks", colors: ["#00704A", "#1E3932", "#FFFFFF"] },
-  { name: "Dunkin'", slug: "dunkin", colors: ["#FF671F", "#DA1884", "#653819"] },
-  { name: "Chipotle", slug: "chipotle", colors: ["#451400", "#AD343E"] },
-  { name: "Shake Shack", slug: "shakeshack", colors: ["#5CA432", "#000000"] },
-  { name: "Nando's", slug: "nandos", colors: ["#000000", "#C8102E", "#F4C430"] },
-  { name: "Dairy Queen", slug: "dairyqueen", colors: ["#EE3124", "#005696"] },
-  { name: "Krispy Kreme", slug: "krispykreme", colors: ["#007A3D", "#DD131D"] },
-  { name: "Baskin-Robbins", slug: "baskinrobbins", colors: ["#315BA7", "#EC1B69"] },
+  // Fast Food & Dining
+  { name: "McDonald's", slug: "mcdonalds", domain: "mcdonalds.com", colors: ["#DA291C", "#FFC72C"] },
+  { name: "Burger King", slug: "burgerking", domain: "bk.com", colors: ["#D62300", "#FBE122", "#502314"] },
+  { name: "Subway", slug: "subway", domain: "subway.com", colors: ["#008C15", "#FFC600"] },
+  { name: "Taco Bell", slug: "tacobell", domain: "tacobell.com", colors: ["#702082", "#A77BCA", "#000000"] },
+  { name: "KFC", slug: "kfc", domain: "kfc.com", colors: ["#A3080C", "#000000", "#FFFFFF"] },
+  { name: "Pizza Hut", slug: "pizzahut", domain: "pizzahut.com", colors: ["#EE3124", "#00A859", "#FFC425"] },
+  { name: "Domino's", slug: "dominos", domain: "dominos.com", colors: ["#006491", "#E31837"] },
+  { name: "Starbucks", slug: "starbucks", domain: "starbucks.com", colors: ["#00704A", "#1E3932", "#FFFFFF"] },
+  { name: "Dunkin'", slug: "dunkin", domain: "dunkindonuts.com", colors: ["#FF671F", "#DA1884", "#653819"] },
+  { name: "Chipotle", slug: "chipotle", domain: "chipotle.com", colors: ["#451400", "#AD343E"] },
+  { name: "Nando's", slug: "nandos", domain: "nandos.com", colors: ["#000000", "#C8102E", "#F4C430"] },
+  { name: "Dairy Queen", slug: "dairyqueen", domain: "dairyqueen.com", colors: ["#EE3124", "#005696"] },
+  { name: "Krispy Kreme", slug: "krispykreme", domain: "krispykreme.com", colors: ["#007A3D", "#DD131D"] },
+  { name: "Baskin-Robbins", slug: "baskinrobbins", domain: "baskinrobbins.com", colors: ["#315BA7", "#EC1B69"] },
+  { name: "Shake Shack", slug: "shakeshack", domain: "shakeshack.com", colors: ["#5CA432", "#000000"] },
 
-  // Beverages & Packaged Goods (16-25)
-  { name: "Coca-Cola", slug: "cocacola", colors: ["#F40009", "#000000", "#FFFFFF"] },
-  { name: "Pepsi", slug: "pepsi", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
-  { name: "Red Bull", slug: "redbull", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
-  { name: "Monster Energy", slug: "monsterenergy", colors: ["#95D600", "#000000"] },
-  { name: "Heineken", slug: "heineken", colors: ["#008200", "#FF0000"] },
-  { name: "Corona", slug: "corona", colors: ["#002454", "#F4BE18", "#FFFFFF"] },
-  { name: "Budweiser", slug: "budweiser", colors: ["#C8102E", "#15244C", "#D1A153"] },
-  { name: "Guinness", slug: "guinness", colors: ["#000000", "#D6B265", "#FFFFFF"] },
-  { name: "Carlsberg", slug: "carlsberg", colors: ["#00382B", "#FFFFFF"] },
-  { name: "Stella Artois", slug: "stellaartois", colors: ["#9E1B32", "#C69214", "#FFFFFF"] },
+  // Beverages & Packaged Goods
+  { name: "Coca-Cola", slug: "cocacola", domain: "coca-cola.com", colors: ["#F40009", "#000000", "#FFFFFF"] },
+  { name: "Pepsi", slug: "pepsi", domain: "pepsi.com", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
+  { name: "Red Bull", slug: "redbull", domain: "redbull.com", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
+  { name: "Monster Energy", slug: "monsterenergy", domain: "monsterenergy.com", colors: ["#95D600", "#000000"] },
+  { name: "Heineken", slug: "heineken", domain: "heineken.com", colors: ["#008200", "#FF0000"] },
+  { name: "Budweiser", slug: "budweiser", domain: "budweiser.com", colors: ["#C8102E", "#15244C", "#D1A153"] },
+  { name: "Guinness", slug: "guinness", domain: "guinness.com", colors: ["#000000", "#D6B265", "#FFFFFF"] },
+  { name: "Carlsberg", slug: "carlsberg", domain: "carlsberg.com", colors: ["#00382B", "#FFFFFF"] },
+  { name: "Stella Artois", slug: "stellaartois", domain: "stellaartois.com", colors: ["#9E1B32", "#C69214", "#FFFFFF"] },
 
-  // Big Tech, Platforms & Social (26-50)
-  { name: "Google", slug: "google", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
-  { name: "Microsoft", slug: "microsoft", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
-  { name: "Apple", slug: "apple", colors: ["#555555", "#000000", "#FFFFFF"] },
-  { name: "Amazon", slug: "amazon", colors: ["#FF9900", "#146EB4", "#000000"] },
-  { name: "Meta", slug: "meta", colors: ["#0081FB", "#0064E0"] },
-  { name: "YouTube", slug: "youtube", colors: ["#FF0000", "#282828", "#FFFFFF"] },
-  { name: "Spotify", slug: "spotify", colors: ["#1DB954", "#191414"] },
-  { name: "Netflix", slug: "netflix", colors: ["#E50914", "#000000"] },
-  { name: "Discord", slug: "discord", colors: ["#5865F2", "#23272A", "#FFFFFF"] },
-  { name: "Twitch", slug: "twitch", colors: ["#9146FF", "#000000", "#FFFFFF"] },
-  { name: "Twitter / X", slug: "x", colors: ["#000000", "#FFFFFF"] },
-  { name: "Instagram", slug: "instagram", colors: ["#E1306C", "#F77737", "#405DE6", "#FCAF45"] },
-  { name: "Facebook", slug: "facebook", colors: ["#1877F2", "#FFFFFF"] },
-  { name: "TikTok", slug: "tiktok", colors: ["#00F2FE", "#FE2C55", "#000000"] },
-  { name: "Snapchat", slug: "snapchat", colors: ["#FFFC00", "#000000", "#FFFFFF"] },
-  { name: "Reddit", slug: "reddit", colors: ["#FF4500", "#cee3f8", "#000000"] },
-  { name: "Pinterest", slug: "pinterest", colors: ["#E60023", "#FFFFFF"] },
-  { name: "Slack", slug: "slack", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E"] },
-  { name: "LinkedIn", slug: "linkedin", colors: ["#0A66C2", "#FFFFFF"] },
-  { name: "WhatsApp", slug: "whatsapp", colors: ["#25D366", "#075E54", "#128C7E"] },
-  { name: "Telegram", slug: "telegram", colors: ["#24A1DE", "#FFFFFF"] },
-  { name: "Dropbox", slug: "dropbox", colors: ["#0061FF", "#000000"] },
-  { name: "Uber", slug: "uber", colors: ["#000000", "#FFFFFF"] },
-  { name: "Lyft", slug: "lyft", colors: ["#FF00BF", "#111111"] },
-  { name: "Airbnb", slug: "airbnb", colors: ["#FF5A5F", "#00A699", "#FC642D"] },
+  // Big Tech & Platforms
+  { name: "Google", slug: "google", domain: "google.com", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
+  { name: "Microsoft", slug: "microsoft", domain: "microsoft.com", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
+  { name: "Apple", slug: "apple", domain: "apple.com", colors: ["#555555", "#000000", "#FFFFFF"] },
+  { name: "Amazon", slug: "amazon", domain: "amazon.com", colors: ["#FF9900", "#146EB4", "#000000"] },
+  { name: "Meta", slug: "meta", domain: "meta.com", colors: ["#0081FB", "#0064E0"] },
+  { name: "YouTube", slug: "youtube", domain: "youtube.com", colors: ["#FF0000", "#282828", "#FFFFFF"] },
+  { name: "Spotify", slug: "spotify", domain: "spotify.com", colors: ["#1DB954", "#191414"] },
+  { name: "Netflix", slug: "netflix", domain: "netflix.com", colors: ["#E50914", "#000000"] },
+  { name: "Discord", slug: "discord", domain: "discord.com", colors: ["#5865F2", "#23272A", "#FFFFFF"] },
+  { name: "Twitch", slug: "twitch", domain: "twitch.tv", colors: ["#9146FF", "#000000", "#FFFFFF"] },
+  { name: "Twitter / X", slug: "x", domain: "x.com", colors: ["#000000", "#FFFFFF"] },
+  { name: "Instagram", slug: "instagram", domain: "instagram.com", colors: ["#E1306C", "#F77737", "#405DE6", "#FCAF45"] },
+  { name: "Facebook", slug: "facebook", domain: "facebook.com", colors: ["#1877F2", "#FFFFFF"] },
+  { name: "TikTok", slug: "tiktok", domain: "tiktok.com", colors: ["#00F2FE", "#FE2C55", "#000000"] },
+  { name: "Snapchat", slug: "snapchat", domain: "snapchat.com", colors: ["#FFFC00", "#000000", "#FFFFFF"] },
+  { name: "Reddit", slug: "reddit", domain: "reddit.com", colors: ["#FF4500", "#cee3f8", "#000000"] },
+  { name: "Pinterest", slug: "pinterest", domain: "pinterest.com", colors: ["#E60023", "#FFFFFF"] },
+  { name: "Slack", slug: "slack", domain: "slack.com", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E"] },
+  { name: "LinkedIn", slug: "linkedin", domain: "linkedin.com", colors: ["#0A66C2", "#FFFFFF"] },
+  { name: "WhatsApp", slug: "whatsapp", domain: "whatsapp.com", colors: ["#25D366", "#075E54", "#128C7E"] },
+  { name: "Telegram", slug: "telegram", domain: "telegram.org", colors: ["#24A1DE", "#FFFFFF"] },
+  { name: "Dropbox", slug: "dropbox", domain: "dropbox.com", colors: ["#0061FF", "#000000"] },
+  { name: "Uber", slug: "uber", domain: "uber.com", colors: ["#000000", "#FFFFFF"] },
+  { name: "Airbnb", slug: "airbnb", domain: "airbnb.com", colors: ["#FF5A5F", "#00A699", "#FC642D"] },
+  { name: "GitHub", slug: "github", domain: "github.com", colors: ["#24292E", "#FFFFFF"] },
 
-  // Software, Apps & Payments (51-60)
-  { name: "Shopify", slug: "shopify", colors: ["#96BF48", "#004C3F", "#FFFFFF"] },
-  { name: "GitHub", slug: "github", colors: ["#24292E", "#FFFFFF"] },
-  { name: "Figma", slug: "figma", colors: ["#F24E1E", "#A259FF", "#1ABCFE", "#0ACF83"] },
-  { name: "Canva", slug: "canva", colors: ["#00C4CC", "#7D2AE8"] },
-  { name: "Notion", slug: "notion", colors: ["#000000", "#FFFFFF"] },
-  { name: "Zoom", slug: "zoom", colors: ["#2D8CFF", "#FFFFFF"] },
-  { name: "Duolingo", slug: "duolingo", colors: ["#58CC02", "#FFC800", "#CE82FF"] },
-  { name: "Tinder", slug: "tinder", colors: ["#FE3C72", "#FF655B"] },
-  { name: "Stripe", slug: "stripe", colors: ["#635BFF", "#0A2540"] },
-  { name: "PayPal", slug: "paypal", colors: ["#003087", "#0079C1", "#00457C"] },
+  // Hardware & Gaming
+  { name: "Intel", slug: "intel", domain: "intel.com", colors: ["#0071C5", "#00C7FD", "#FFFFFF"] },
+  { name: "AMD", slug: "amd", domain: "amd.com", colors: ["#ED1C24", "#000000", "#FFFFFF"] },
+  { name: "Nvidia", slug: "nvidia", domain: "nvidia.com", colors: ["#76B900", "#000000", "#FFFFFF"] },
+  { name: "Samsung", slug: "samsung", domain: "samsung.com", colors: ["#1428A0", "#000000", "#FFFFFF"] },
+  { name: "Sony", slug: "sony", domain: "sony.com", colors: ["#000000", "#FFFFFF"] },
+  { name: "PlayStation", slug: "playstation", domain: "playstation.com", colors: ["#003791", "#000000", "#FFFFFF"] },
+  { name: "Xbox", slug: "xbox", domain: "xbox.com", colors: ["#107C10", "#000000"] },
+  { name: "Nintendo", slug: "nintendoswitch", domain: "nintendo.com", colors: ["#E60012", "#FFFFFF"] },
+  { name: "Steam", slug: "steam", domain: "steampowered.com", colors: ["#171A21", "#66C0F4", "#1B2838"] },
+  { name: "Epic Games", slug: "epicgames", domain: "epicgames.com", colors: ["#313131", "#FFFFFF"] },
 
-  // Hardware & Gaming (61-70)
-  { name: "Intel", slug: "intel", colors: ["#0071C5", "#00C7FD", "#FFFFFF"] },
-  { name: "AMD", slug: "amd", colors: ["#ED1C24", "#000000", "#FFFFFF"] },
-  { name: "Nvidia", slug: "nvidia", colors: ["#76B900", "#000000", "#FFFFFF"] },
-  { name: "Samsung", slug: "samsung", colors: ["#1428A0", "#000000", "#FFFFFF"] },
-  { name: "Sony", slug: "sony", colors: ["#000000", "#FFFFFF"] },
-  { name: "PlayStation", slug: "playstation", colors: ["#003791", "#000000", "#FFFFFF"] },
-  { name: "Xbox", slug: "xbox", colors: ["#107C10", "#000000"] },
-  { name: "Nintendo", slug: "nintendoswitch", colors: ["#E60012", "#FFFFFF"] },
-  { name: "Steam", slug: "steam", colors: ["#171A21", "#66C0F4", "#1B2838"] },
-  { name: "Epic Games", slug: "epicgames", colors: ["#313131", "#FFFFFF"] },
-
-  // Automotive, Retail & Apparel (71-80)
-  { name: "Ferrari", slug: "ferrari", colors: ["#FF2800", "#FFF200", "#00903E"] },
-  { name: "Porsche", slug: "porsche", colors: ["#D5001C", "#FFD700", "#000000"] },
-  { name: "BMW", slug: "bmw", colors: ["#0066B1", "#70A9D7", "#000000"] },
-  { name: "Mercedes-Benz", slug: "mercedes", colors: ["#333333", "#00ADEF"] },
-  { name: "Audi", slug: "audi", colors: ["#BB0A30", "#000000"] },
-  { name: "Tesla", slug: "tesla", colors: ["#E82127", "#000000"] },
-  { name: "Ford", slug: "ford", colors: ["#003478", "#FFFFFF"] },
-  { name: "Toyota", slug: "toyota", colors: ["#EB0A1E", "#000000"] },
-  { name: "Honda", slug: "honda", colors: ["#CC0000", "#000000"] },
-  { name: "Nike", slug: "nike", colors: ["#111111", "#FFFFFF"] }
+  // Automotive, Retail & Finance
+  { name: "Ferrari", slug: "ferrari", domain: "ferrari.com", colors: ["#FF2800", "#FFF200", "#00903E"] },
+  { name: "Porsche", slug: "porsche", domain: "porsche.com", colors: ["#D5001C", "#FFD700", "#000000"] },
+  { name: "BMW", slug: "bmw", domain: "bmw.com", colors: ["#0066B1", "#70A9D7", "#000000"] },
+  { name: "Mercedes-Benz", slug: "mercedes", domain: "mercedes-benz.com", colors: ["#333333", "#00ADEF"] },
+  { name: "Tesla", slug: "tesla", domain: "tesla.com", colors: ["#E82127", "#000000"] },
+  { name: "Ford", slug: "ford", domain: "ford.com", colors: ["#003478", "#FFFFFF"] },
+  { name: "Toyota", slug: "toyota", domain: "toyota.com", colors: ["#EB0A1E", "#000000"] },
+  { name: "IKEA", slug: "ikea", domain: "ikea.com", colors: ["#0051BA", "#FFDA1A"] },
+  { name: "Target", slug: "target", domain: "target.com", colors: ["#CC0000", "#FFFFFF"] },
+  { name: "Walmart", slug: "walmart", domain: "walmart.com", colors: ["#0071CE", "#FFC220"] },
+  { name: "Lego", slug: "lego", domain: "lego.com", colors: ["#D11013", "#FFD500", "#000000"] },
+  { name: "Nike", slug: "nike", domain: "nike.com", colors: ["#111111", "#FFFFFF"] },
+  { name: "Mastercard", slug: "mastercard", domain: "mastercard.com", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
+  { name: "Visa", slug: "visa", domain: "visa.com", colors: ["#1A1F71", "#F7B600"] },
+  { name: "PayPal", slug: "paypal", domain: "paypal.com", colors: ["#003087", "#0079C1", "#00457C"] }
 ];
 
 const ROUND_TIME_MS = 7000;
-const COOLDOWN_LIMIT = 40;
+const COOLDOWN_LIMIT = 25;
 
 let score = 0;
 let streak = 0;
@@ -171,7 +163,6 @@ function nextRound() {
   feedbackEl.className = "feedback";
   cardLabel.textContent = "Brand Color Palette";
 
-  // Filter out recent cooldown pool
   const availablePool = BRANDS.filter((b) => !recentHistory.includes(b.name));
   const pool = availablePool.length > 0 ? availablePool : BRANDS;
 
@@ -182,7 +173,6 @@ function nextRound() {
     recentHistory.shift();
   }
 
-  // Render Swatches
   displayArea.innerHTML = "";
   currentBrand.colors.forEach((color) => {
     const dot = document.createElement("div");
@@ -213,9 +203,25 @@ function showBrandLogo(brand) {
   const logoImg = document.createElement("img");
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
-  
-  // Directly loads official verified SVG from jsDelivr
-  logoImg.src = `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.slug}.svg`;
+  logoImg.referrerPolicy = "no-referrer";
+
+  // Multi-tier CDN fallback chain: SimpleIcons -> Google HD Favicon -> Icon Horse
+  const sources = [
+    `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.slug}.svg`,
+    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=256&url=https://${brand.domain}`,
+    `https://icon.horse/icon/${brand.domain}`
+  ];
+
+  let currentSourceIdx = 0;
+
+  function loadNextSource() {
+    if (currentSourceIdx < sources.length) {
+      logoImg.src = sources[currentSourceIdx++];
+    }
+  }
+
+  logoImg.onerror = loadNextSource;
+  loadNextSource();
 
   displayArea.appendChild(logoImg);
 }
