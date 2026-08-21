@@ -1,4 +1,4 @@
-const CACHE_NAME = 'huebrand-v16';
+const CACHE_NAME = 'huebrand-v18';
 const ASSETS = [
   './',
   './index.html',
