@@ -8,7 +8,7 @@ const BRANDS = [
   { name: "Pizza Hut", slug: "pizzahut", domain: "pizzahut.com", colors: ["#EE3124", "#00A859", "#FFC425"] },
   { name: "Domino's", slug: "dominos", domain: "dominos.com", colors: ["#006491", "#E31837"] },
   { name: "Starbucks", slug: "starbucks", domain: "starbucks.com", colors: ["#00704A", "#1E3932", "#FFFFFF"] },
-  { name: "Dunkin'", slug: "dunkin", domain: "dunkindonuts.com", colors: ["#FF671F", "#DA1884", "#653819"] },
+  { name: "Dunkin'", slug: "dunkin", domain: "dunkin.com", colors: ["#FF671F", "#DA1884", "#653819"] },
   { name: "Chipotle", slug: "chipotle", domain: "chipotle.com", colors: ["#451400", "#AD343E"] },
   { name: "Nando's", slug: "nandos", domain: "nandos.com", colors: ["#000000", "#C8102E", "#F4C430"] },
   { name: "Dairy Queen", slug: "dairyqueen", domain: "dairyqueen.com", colors: ["#EE3124", "#005696"] },
@@ -95,6 +95,8 @@ let acceptingInput = true;
 let deferredPrompt = null;
 let recentHistory = [];
 
+const resolvedLogoSources = new Map();
+
 let roundStartTime = 0;
 let timerInterval = null;
 
@@ -125,9 +127,90 @@ function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function getLogoSources(brand) {
+  const primaryColor = brand.colors[0].replace("#", "");
+  const encodedSiteUrl = encodeURIComponent(`https://${brand.domain}`);
+
+  return [
+    // Full-color website/app icons first
+    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=256&url=${encodedSiteUrl}`,
+    `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=256`,
+    `https://icon.horse/icon/${brand.domain}`,
+
+    // Direct site icon fallbacks
+    `https://${brand.domain}/apple-touch-icon.png`,
+    `https://${brand.domain}/favicon.ico`,
+
+    // Last resort: Simple Icons, forced to the brand's primary color
+    `https://cdn.simpleicons.org/${brand.slug}/${primaryColor}`
+  ];
+}
+
+function preloadBrandLogo(brand) {
+  if (!brand || resolvedLogoSources.has(brand.name)) return;
+
+  const sources = getLogoSources(brand);
+  let sourceIndex = 0;
+
+  function tryNext() {
+    if (sourceIndex >= sources.length) return;
+
+    const testImg = new Image();
+    const source = sources[sourceIndex++];
+
+    testImg.referrerPolicy = "no-referrer";
+
+    testImg.onload = () => {
+      resolvedLogoSources.set(brand.name, source);
+    };
+
+    testImg.onerror = tryNext;
+    testImg.src = source;
+  }
+
+  tryNext();
+}
+
+function showLogoFallback(brand) {
+  displayArea.innerHTML = "";
+
+  const fallback = document.createElement("div");
+
+  fallback.setAttribute("role", "img");
+  fallback.setAttribute("aria-label", `${brand.name} logo unavailable`);
+  fallback.textContent = brand.name;
+
+  const gradientColors =
+    brand.colors.length > 1
+      ? brand.colors.join(", ")
+      : `${brand.colors[0]}, ${brand.colors[0]}`;
+
+  fallback.style.width = "100%";
+  fallback.style.maxWidth = "400px";
+  fallback.style.height = "200px";
+  fallback.style.borderRadius = "20px";
+  fallback.style.padding = "24px";
+  fallback.style.display = "flex";
+  fallback.style.alignItems = "center";
+  fallback.style.justifyContent = "center";
+  fallback.style.textAlign = "center";
+  fallback.style.fontSize = "clamp(1.4rem, 6vw, 2.2rem)";
+  fallback.style.fontWeight = "900";
+  fallback.style.letterSpacing = "0.02em";
+  fallback.style.color = "#ffffff";
+  fallback.style.textShadow = "0 2px 8px rgba(0, 0, 0, 0.65)";
+  fallback.style.border = "2px solid rgba(255, 255, 255, 0.2)";
+  fallback.style.boxShadow = "0 12px 32px rgba(0, 0, 0, 0.5)";
+  fallback.style.background = `linear-gradient(135deg, ${gradientColors})`;
+
+  displayArea.appendChild(fallback);
+}
+
 function startTimer() {
   clearInterval(timerInterval);
+
   roundStartTime = performance.now();
+
   timerBar.style.width = "100%";
   timerBar.className = "timer-bar";
 
@@ -159,37 +242,64 @@ function stopTimer() {
 
 function nextRound() {
   acceptingInput = true;
+
   feedbackEl.textContent = "";
   feedbackEl.className = "feedback";
+
   cardLabel.textContent = "Brand Color Palette";
 
-  const availablePool = BRANDS.filter((b) => !recentHistory.includes(b.name));
-  const pool = availablePool.length > 0 ? availablePool : BRANDS;
+  const availablePool = BRANDS.filter(
+    (brand) => !recentHistory.includes(brand.name)
+  );
 
-  currentBrand = pool[Math.floor(Math.random() * pool.length)];
+  const pool =
+    availablePool.length > 0
+      ? availablePool
+      : BRANDS;
+
+  currentBrand =
+    pool[Math.floor(Math.random() * pool.length)];
 
   recentHistory.push(currentBrand.name);
+
   if (recentHistory.length > COOLDOWN_LIMIT) {
     recentHistory.shift();
   }
 
+  // Start downloading the reveal logo while the player is guessing.
+  // This makes the logo much more likely to appear instantly on reveal.
+  preloadBrandLogo(currentBrand);
+
   displayArea.innerHTML = "";
+
   currentBrand.colors.forEach((color) => {
     const dot = document.createElement("div");
+
     dot.className = "splotch";
     dot.style.backgroundColor = color;
+
     displayArea.appendChild(dot);
   });
 
-  const wrongOptions = shuffle(BRANDS.filter((b) => b.name !== currentBrand.name)).slice(0, 3);
-  const roundChoices = shuffle([currentBrand, ...wrongOptions]);
+  const wrongOptions = shuffle(
+    BRANDS.filter((brand) => brand.name !== currentBrand.name)
+  ).slice(0, 3);
+
+  const roundChoices = shuffle([
+    currentBrand,
+    ...wrongOptions
+  ]);
 
   optionsEl.innerHTML = "";
+
   roundChoices.forEach((brand) => {
     const btn = document.createElement("button");
+
     btn.className = "btn-option";
     btn.textContent = brand.name;
+
     btn.onclick = () => handleChoice(brand.name, btn);
+
     optionsEl.appendChild(btn);
   });
 
@@ -201,70 +311,152 @@ function showBrandLogo(brand) {
   cardLabel.textContent = brand.name;
 
   const logoImg = document.createElement("img");
+
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
   logoImg.referrerPolicy = "no-referrer";
 
-  // Multi-tier CDN fallback chain: SimpleIcons -> Google HD Favicon -> Icon Horse
-  const sources = [
-    `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.slug}.svg`,
-    `https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=256&url=https://${brand.domain}`,
-    `https://icon.horse/icon/${brand.domain}`
-  ];
+  const cachedSource =
+    resolvedLogoSources.get(brand.name);
 
-  let currentSourceIdx = 0;
+  const sources = cachedSource
+    ? [
+        cachedSource,
+        ...getLogoSources(brand).filter(
+          (source) => source !== cachedSource
+        )
+      ]
+    : getLogoSources(brand);
 
-  function loadNextSource() {
-    if (currentSourceIdx < sources.length) {
-      logoImg.src = sources[currentSourceIdx++];
+  let sourceIndex = 0;
+  let sourceTimer = null;
+
+  function cleanupTimer() {
+    if (sourceTimer) {
+      clearTimeout(sourceTimer);
+      sourceTimer = null;
     }
   }
 
-  logoImg.onerror = loadNextSource;
-  loadNextSource();
+  function loadNextSource() {
+    cleanupTimer();
+
+    if (sourceIndex >= sources.length) {
+      showLogoFallback(brand);
+      return;
+    }
+
+    const source = sources[sourceIndex++];
+
+    logoImg.onload = () => {
+      cleanupTimer();
+
+      resolvedLogoSources.set(
+        brand.name,
+        source
+      );
+    };
+
+    logoImg.onerror = loadNextSource;
+
+    logoImg.src = source;
+
+    // If a third-party image server hangs,
+    // move to the next source instead of leaving an empty reveal.
+    sourceTimer = setTimeout(() => {
+      if (
+        !logoImg.complete ||
+        logoImg.naturalWidth === 0
+      ) {
+        loadNextSource();
+      }
+    }, 1200);
+  }
 
   displayArea.appendChild(logoImg);
+
+  loadNextSource();
 }
 
 function handleChoice(selectedName, clickedBtn) {
   if (!acceptingInput) return;
+
   acceptingInput = false;
+
   stopTimer();
 
-  const elapsed = performance.now() - roundStartTime;
-  const buttons = optionsEl.querySelectorAll(".btn-option");
+  const elapsed =
+    performance.now() - roundStartTime;
+
+  const buttons =
+    optionsEl.querySelectorAll(".btn-option");
+
   showBrandLogo(currentBrand);
 
   if (selectedName === currentBrand.name) {
     streak += 1;
 
     let speedBonus = 0;
+
     if (elapsed <= 2000) {
       speedBonus = 50;
     } else if (elapsed < ROUND_TIME_MS) {
-      const decayRatio = (ROUND_TIME_MS - elapsed) / (ROUND_TIME_MS - 2000);
-      speedBonus = Math.max(0, Math.round(decayRatio * 50));
+      const decayRatio =
+        (ROUND_TIME_MS - elapsed) /
+        (ROUND_TIME_MS - 2000);
+
+      speedBonus =
+        Math.max(
+          0,
+          Math.round(decayRatio * 50)
+        );
     }
 
-    const streakBonus = streak * 25;
-    const pointsWon = 100 + streakBonus + speedBonus;
+    const streakBonus =
+      streak * 25;
+
+    const pointsWon =
+      100 +
+      streakBonus +
+      speedBonus;
+
     score += pointsWon;
 
     if (streak > bestStreak) {
       bestStreak = streak;
-      localStorage.setItem("huebrand_best_streak", bestStreak);
-      bestStreakEl.textContent = bestStreak;
+
+      localStorage.setItem(
+        "huebrand_best_streak",
+        bestStreak
+      );
+
+      bestStreakEl.textContent =
+        bestStreak;
     }
 
     clickedBtn.classList.add("correct");
-    const bonusText = speedBonus > 0 ? ` (+${speedBonus} speed)` : "";
-    feedbackEl.textContent = `+${pointsWon} pts${bonusText} (${streak} streak!)`;
-    feedbackEl.className = "feedback correct";
+
+    const bonusText =
+      speedBonus > 0
+        ? ` (+${speedBonus} speed)`
+        : "";
+
+    feedbackEl.textContent =
+      `+${pointsWon} pts${bonusText} (${streak} streak!)`;
+
+    feedbackEl.className =
+      "feedback correct";
+
   } else {
     streak = 0;
+
     clickedBtn.classList.add("wrong");
-    feedbackEl.textContent = `Incorrect — It's ${currentBrand.name}`;
-    feedbackEl.className = "feedback wrong";
+
+    feedbackEl.textContent =
+      `Incorrect — It's ${currentBrand.name}`;
+
+    feedbackEl.className =
+      "feedback wrong";
 
     buttons.forEach((btn) => {
       if (btn.textContent === currentBrand.name) {
@@ -276,74 +468,149 @@ function handleChoice(selectedName, clickedBtn) {
   scoreEl.textContent = score;
   streakEl.textContent = streak;
 
-  setTimeout(nextRound, 1500);
+  setTimeout(
+    nextRound,
+    1500
+  );
 }
 
 function handleTimeout() {
   if (!acceptingInput) return;
+
   acceptingInput = false;
 
   streak = 0;
+
   scoreEl.textContent = score;
   streakEl.textContent = streak;
 
   showBrandLogo(currentBrand);
 
-  const buttons = optionsEl.querySelectorAll(".btn-option");
+  const buttons =
+    optionsEl.querySelectorAll(".btn-option");
+
   buttons.forEach((btn) => {
     if (btn.textContent === currentBrand.name) {
       btn.classList.add("correct");
     }
   });
 
-  feedbackEl.textContent = `Time's Up! — It's ${currentBrand.name}`;
-  feedbackEl.className = "feedback wrong";
+  feedbackEl.textContent =
+    `Time's Up! — It's ${currentBrand.name}`;
 
-  setTimeout(nextRound, 1500);
+  feedbackEl.className =
+    "feedback wrong";
+
+  setTimeout(
+    nextRound,
+    1500
+  );
 }
 
-// Modal Listeners
-openSettingsBtn.addEventListener("click", () => settingsModal.classList.add("active"));
-closeSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("active"));
-settingsModal.addEventListener("click", (e) => {
-  if (e.target === settingsModal) settingsModal.classList.remove("active");
-});
 
-// PWA Install Handling
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-});
+// ===============================
+// MODAL LISTENERS
+// ===============================
 
-installBtn.addEventListener("click", () => {
-  settingsModal.classList.remove("active");
+openSettingsBtn.addEventListener(
+  "click",
+  () => settingsModal.classList.add("active")
+);
 
-  if (deferredPrompt) {
-    installInstructionText.textContent = "Install HUEBRAND to your home screen or desktop for fast, offline access.";
-    confirmInstallBtn.style.display = "block";
-  } else {
-    installInstructionText.textContent = "To install: tap your browser menu and choose 'Add to Home Screen' or 'Install App'.";
-    confirmInstallBtn.style.display = "none";
+closeSettingsBtn.addEventListener(
+  "click",
+  () => settingsModal.classList.remove("active")
+);
+
+settingsModal.addEventListener(
+  "click",
+  (e) => {
+    if (e.target === settingsModal) {
+      settingsModal.classList.remove("active");
+    }
   }
+);
 
-  installPromptModal.classList.add("active");
-});
 
-confirmInstallBtn.addEventListener("click", async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
+// ===============================
+// PWA INSTALL HANDLING
+// ===============================
+
+window.addEventListener(
+  "beforeinstallprompt",
+  (e) => {
+    e.preventDefault();
+
+    deferredPrompt = e;
   }
-  installPromptModal.classList.remove("active");
-});
+);
 
-closeInstallPromptBtn.addEventListener("click", () => {
-  installPromptModal.classList.remove("active");
-});
+installBtn.addEventListener(
+  "click",
+  () => {
+    settingsModal.classList.remove("active");
 
-installPromptModal.addEventListener("click", (e) => {
-  if (e.target === installPromptModal) installPromptModal.classList.remove("active");
-});
+    if (deferredPrompt) {
+      installInstructionText.textContent =
+        "Install HUEBRAND to your home screen or desktop for fast, offline access.";
+
+      confirmInstallBtn.style.display =
+        "block";
+
+    } else {
+      installInstructionText.textContent =
+        "To install: tap your browser menu and choose 'Add to Home Screen' or 'Install App'.";
+
+      confirmInstallBtn.style.display =
+        "none";
+    }
+
+    installPromptModal.classList.add(
+      "active"
+    );
+  }
+);
+
+confirmInstallBtn.addEventListener(
+  "click",
+  async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+
+      await deferredPrompt.userChoice;
+
+      deferredPrompt = null;
+    }
+
+    installPromptModal.classList.remove(
+      "active"
+    );
+  }
+);
+
+closeInstallPromptBtn.addEventListener(
+  "click",
+  () => {
+    installPromptModal.classList.remove(
+      "active"
+    );
+  }
+);
+
+installPromptModal.addEventListener(
+  "click",
+  (e) => {
+    if (e.target === installPromptModal) {
+      installPromptModal.classList.remove(
+        "active"
+      );
+    }
+  }
+);
+
+
+// ===============================
+// START GAME
+// ===============================
 
 nextRound();
