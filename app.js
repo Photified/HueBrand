@@ -1,5 +1,5 @@
 const BRANDS = [
-  // Fast Food & Dining (1-35)
+  // Fast Food & Dining
   { name: "McDonald's", logo: "https://upload.wikimedia.org/wikipedia/commons/3/36/McDonald%27s_Golden_Arches.svg", colors: ["#DA291C", "#FFC72C"] },
   { name: "Burger King", logo: "https://upload.wikimedia.org/wikipedia/commons/c/cc/Burger_King_2020.svg", colors: ["#D62300", "#FBE122", "#502314"] },
   { name: "Wendy's", logo: "https://upload.wikimedia.org/wikipedia/en/3/32/Wendy%27s_full_logo_2012.svg", colors: ["#E2203D", "#199BD7", "#000000"] },
@@ -14,7 +14,7 @@ const BRANDS = [
   { name: "Starbucks", logo: "https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg", colors: ["#00704A", "#1E3932", "#FFFFFF"] },
   { name: "Tim Hortons", logo: "https://upload.wikimedia.org/wikipedia/commons/5/57/Tim_Hortons_logo.svg", colors: ["#C8102E", "#4B2E1E"] },
   { name: "Chipotle", logo: "https://upload.wikimedia.org/wikipedia/en/3/3b/Chipotle_Mexican_Grill_logo.svg", colors: ["#451400", "#AD343E"] },
-  { name: "Popeyes", logoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/00/Popeyes_logo.svg", colors: ["#F15A24", "#007A3E"] },
+  { name: "Popeyes", logo: "https://upload.wikimedia.org/wikipedia/commons/0/00/Popeyes_logo.svg", colors: ["#F15A24", "#007A3E"] },
   { name: "Dairy Queen", logo: "https://upload.wikimedia.org/wikipedia/commons/a/ae/Dairy_Queen_logo.svg", colors: ["#EE3124", "#005696"] },
   { name: "Five Guys", logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Five_Guys_logo.svg", colors: ["#ED1C24", "#FFFFFF"] },
   { name: "Shake Shack", logo: "https://upload.wikimedia.org/wikipedia/commons/d/df/Shake_Shack_logo.svg", colors: ["#5CA432", "#000000"] },
@@ -36,7 +36,7 @@ const BRANDS = [
   { name: "Olive Garden", logo: "https://upload.wikimedia.org/wikipedia/en/3/39/Olive_Garden_Logo.svg", colors: ["#5B6734", "#4B2E1E"] },
   { name: "Baskin-Robbins", logo: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Baskin-Robbins_logo.svg", colors: ["#315BA7", "#EC1B69"] },
 
-  // Beverages & Packaged Foods (36-75)
+  // Beverages & Packaged Foods
   { name: "Coca-Cola", logo: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Coca-Cola_logo.svg", colors: ["#F40009", "#000000", "#FFFFFF"] },
   { name: "Pepsi", logo: "https://upload.wikimedia.org/wikipedia/commons/0/0f/Pepsi_logo_2014.svg", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
   { name: "Red Bull", logo: "https://upload.wikimedia.org/wikipedia/en/f/f5/RedBullEnergyDrink.svg", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
@@ -78,7 +78,7 @@ const BRANDS = [
   { name: "Danone", logo: "https://upload.wikimedia.org/wikipedia/commons/1/13/Danone_logo.svg", colors: ["#005CA9", "#E31B23"] },
   { name: "Quaker Oats", logo: "https://upload.wikimedia.org/wikipedia/en/3/3f/Quaker_Oats_Company_logo.svg", colors: ["#003366", "#D71920"] },
 
-  // Big Tech & Cloud Platforms (76-115)
+  // Big Tech & Cloud Platforms
   { name: "Google", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/google.svg", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
   { name: "Microsoft", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/microsoft.svg", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
   { name: "Apple", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/apple.svg", colors: ["#555555", "#000000", "#FFFFFF"] },
@@ -120,7 +120,7 @@ const BRANDS = [
   { name: "Mailchimp", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/mailchimp.svg", colors: ["#FFE01B", "#241C15"] },
   { name: "Stripe", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/stripe.svg", colors: ["#635BFF", "#0A2540"] },
 
-  // Hardware, Components & PC Gaming (116-155)
+  // Hardware & Gaming
   { name: "Intel", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/intel.svg", colors: ["#0071C5", "#00C7FD", "#FFFFFF"] },
   { name: "AMD", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/amd.svg", colors: ["#ED1C24", "#000000", "#FFFFFF"] },
   { name: "Nvidia", logo: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/nvidia.svg", colors: ["#76B900", "#000000", "#FFFFFF"] },
@@ -162,7 +162,7 @@ const BRANDS = [
   { name: "Ubisoft", logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Ubisoft_logo.svg", colors: ["#000000", "#006EFF"] },
   { name: "EA Sports", logo: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Electronic-Arts-Logo.svg", colors: ["#FF4747", "#000000"] },
 
-  // Retail, Supermarkets & Department Stores (156-195)
+  // Retail, Supermarkets & Department Stores
   { name: "IKEA", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Ikea_logo.svg", colors: ["#0051BA", "#FFDA1A"] },
   { name: "Target", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Target_Corporation_logo_%28vector%29.svg", colors: ["#CC0000", "#FFFFFF"] },
   { name: "Walmart", logo: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Walmart_logo.svg", colors: ["#0071CE", "#FFC220"] },
@@ -204,7 +204,7 @@ const BRANDS = [
   { name: "PetSmart", logo: "https://upload.wikimedia.org/wikipedia/commons/5/53/PetSmart_logo.svg", colors: ["#004B87", "#E31837"] },
   { name: "Bed Bath & Beyond", logo: "https://upload.wikimedia.org/wikipedia/commons/1/11/Bed_Bath_%26_Beyond_logo.svg", colors: ["#002C6C", "#FFFFFF"] },
 
-  // Automotive & Racing (196-235)
+  // Automotive & Racing
   { name: "Ferrari", logo: "https://upload.wikimedia.org/wikipedia/en/7/77/Scuderia_Ferrari_Logo.svg", colors: ["#FF2800", "#FFF200", "#00903E"] },
   { name: "Porsche", logo: "https://upload.wikimedia.org/wikipedia/en/8/8c/Porsche_logo.svg", colors: ["#D5001C", "#FFD700", "#000000"] },
   { name: "BMW", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg", colors: ["#0066B1", "#70A9D7", "#000000"] },
@@ -246,7 +246,7 @@ const BRANDS = [
   { name: "Chevron", logo: "https://upload.wikimedia.org/wikipedia/commons/8/87/Chevron_Logo.svg", colors: ["#005596", "#E31B23"] },
   { name: "ExxonMobil", logo: "https://upload.wikimedia.org/wikipedia/commons/4/44/ExxonMobil_Logo.svg", colors: ["#ED1C24", "#003A70"] },
 
-  // Apparel, Footwear & Luxury Fashion (236-270)
+  // Apparel, Footwear & Luxury Fashion
   { name: "Nike", logo: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg", colors: ["#111111", "#FFFFFF"] },
   { name: "Adidas", logo: "https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg", colors: ["#000000", "#FFFFFF"] },
   { name: "Puma", logo: "https://upload.wikimedia.org/wikipedia/commons/8/88/Puma_logo.svg", colors: ["#000000", "#BA0C2F"] },
@@ -283,7 +283,7 @@ const BRANDS = [
   { name: "Tiffany & Co.", logo: "https://upload.wikimedia.org/wikipedia/commons/d/da/Tiffany_%26_Co._logo.svg", colors: ["#81D8D0", "#000000"] },
   { name: "Rolex", logo: "https://upload.wikimedia.org/wikipedia/en/9/95/Rolex_logo.svg", colors: ["#006039", "#A37E2C"] },
 
-  // Finance, Airlines, Media & Telecom (271-300)
+  // Finance, Airlines, Media & Telecom
   { name: "Mastercard", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
   { name: "Visa", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg", colors: ["#1A1F71", "#F7B600"] },
   { name: "American Express", logo: "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg", colors: ["#006FCF", "#FFFFFF"] },
@@ -395,19 +395,19 @@ function nextRound() {
   feedbackEl.className = "feedback";
   cardLabel.textContent = "Brand Color Palette";
 
-  // Enforce 50-turn cooldown on recent brands
+  // Filter out brands in active cooldown
   const availablePool = BRANDS.filter((b) => !recentHistory.includes(b.name));
   const pool = availablePool.length > 0 ? availablePool : BRANDS;
 
   currentBrand = pool[Math.floor(Math.random() * pool.length)];
 
-  // Push to recent queue
+  // Push to recent cooldown queue
   recentHistory.push(currentBrand.name);
   if (recentHistory.length > COOLDOWN_LIMIT) {
     recentHistory.shift();
   }
 
-  // Render Splotches
+  // Render Color Splotches
   displayArea.innerHTML = "";
   currentBrand.colors.forEach((color) => {
     const dot = document.createElement("div");
@@ -416,11 +416,11 @@ function nextRound() {
     displayArea.appendChild(dot);
   });
 
-  // Pick 3 random wrong options
+  // Pick 3 random incorrect choices
   const wrongOptions = shuffle(BRANDS.filter((b) => b.name !== currentBrand.name)).slice(0, 3);
   const roundChoices = shuffle([currentBrand, ...wrongOptions]);
 
-  // Render Buttons
+  // Render Choice Buttons
   optionsEl.innerHTML = "";
   roundChoices.forEach((brand) => {
     const btn = document.createElement("button");
@@ -440,7 +440,28 @@ function showBrandLogo(brand) {
   const logoImg = document.createElement("img");
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
-  logoImg.src = brand.logo;
+  logoImg.referrerPolicy = "no-referrer";
+
+  const cleanSlug = brand.name.toLowerCase().replace(/[^a-z0-9]/g, "");
+  
+  // High-availability CDN failover
+  const sources = [
+    brand.logo ? `https://images.weserv.nl/?url=${encodeURIComponent(brand.logo)}&default=false` : null,
+    `https://api.iconify.design/simple-icons:${cleanSlug}.svg`,
+    `https://raw.githubusercontent.com/pheralb/svgl/main/static/library/${cleanSlug}.svg`,
+    `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${cleanSlug}.svg`
+  ].filter(Boolean);
+
+  let currentSource = 0;
+
+  function loadNext() {
+    if (currentSource < sources.length) {
+      logoImg.src = sources[currentSource++];
+    }
+  }
+
+  logoImg.onerror = loadNext;
+  loadNext();
 
   displayArea.appendChild(logoImg);
 }
