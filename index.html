@@ -82,8 +82,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
-      padding: 20px;
+      gap: 16px;
+      padding: 16px 20px;
       margin: auto 0;
     }
 
@@ -91,11 +91,11 @@
       display: flex;
       justify-content: space-between;
       width: 100%;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 600;
       color: #94a3b8;
       background: #1e293b;
-      padding: 12px 18px;
+      padding: 10px 16px;
       border-radius: 12px;
       border: 1px solid #334155;
     }
@@ -111,18 +111,43 @@
       gap: 4px;
     }
 
+    /* Timer Bar */
+    .timer-container {
+      width: 100%;
+      height: 6px;
+      background: #334155;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: #38bdf8;
+      border-radius: 999px;
+      transition: width 0.1s linear, background-color 0.2s ease;
+    }
+
+    .timer-bar.warning {
+      background: #fbbf24;
+    }
+
+    .timer-bar.danger {
+      background: #f43f5e;
+    }
+
     .card {
       background: #1e293b;
       border: 1px solid #334155;
       border-radius: 20px;
-      padding: 28px 16px;
+      padding: 24px 16px;
       width: 100%;
-      min-height: 220px;
+      min-height: 200px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
       position: relative;
     }
@@ -146,8 +171,8 @@
     }
 
     .splotch {
-      width: 58px;
-      height: 58px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       border: 3px solid rgba(255, 255, 255, 0.15);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -279,13 +304,49 @@
       line-height: 1;
     }
 
-    .modal-body {
-      font-size: 0.9rem;
-      color: #cbd5e1;
-      line-height: 1.5;
+    /* Guide Container */
+    .guide-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+
+    .guide-step {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      background: #38bdf8;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 0.85rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content strong {
+      display: block;
+      color: #f8fafc;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .step-content p {
+      color: #94a3b8;
+      font-size: 0.82rem;
+      line-height: 1.35;
     }
 
     .btn-action {
@@ -330,6 +391,11 @@
       <span>Best: <span id="bestStreak">0</span></span>
     </div>
 
+    <!-- Countdown Bar -->
+    <div class="timer-container">
+      <div class="timer-bar" id="timerBar"></div>
+    </div>
+
     <div class="card">
       <div class="hint-label" id="cardLabel">Brand Color Palette</div>
       <div class="display-area" id="displayArea"></div>
@@ -343,15 +409,36 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal-box">
       <div class="modal-header">
-        <span class="modal-title">Game Settings</span>
+        <span class="modal-title">How to Play</span>
         <button class="btn-close" id="closeSettingsBtn">&times;</button>
       </div>
-      <div class="modal-body">
-        <strong>How Streaks & Scoring Work:</strong>
-        <p>• Base Score: <strong>+100 pts</strong> per correct guess.</p>
-        <p>• Streak Bonus: Adds an extra <strong>+25 pts × Streak</strong> to your score.</p>
-        <p>• Making an incorrect guess resets your streak back to 0.</p>
+
+      <div class="guide-container">
+        <div class="guide-step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Identify the Palette</strong>
+            <p>Analyze the brand swatches before the 7-second round timer runs out.</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Speed Bonus</strong>
+            <p>Score up to +50 speed points the faster you answer (fastest in the first 2 seconds).</p>
+          </div>
+        </div>
+
+        <div class="guide-step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Streak Multiplier</strong>
+            <p>Earn +100 base + 25 pts per consecutive streak. Wrong answers or timeouts reset streak.</p>
+          </div>
+        </div>
       </div>
+
       <button class="btn-action" id="installBtn">Install App</button>
     </div>
   </div>

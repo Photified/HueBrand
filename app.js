@@ -1,37 +1,48 @@
 const BRANDS = [
-  { name: "McDonald's", colors: ["#DA291C", "#FFC72C"] },
-  { name: "IKEA", colors: ["#0051BA", "#FFDA1A"] },
-  { name: "Spotify", colors: ["#1DB954", "#191414"] },
-  { name: "Starbucks", colors: ["#00704A", "#FFFFFF"] },
-  { name: "Target", colors: ["#CC0000", "#FFFFFF"] },
-  { name: "Google", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
-  { name: "Netflix", colors: ["#E50914", "#000000"] },
-  { name: "Mastercard", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
-  { name: "FedEx", colors: ["#4D148C", "#FF6600"] },
-  { name: "Lego", colors: ["#D11013", "#FFD500", "#000000", "#FFFFFF"] },
-  { name: "Best Buy", colors: ["#0046BE", "#FFE000"] },
-  { name: "Subway", colors: ["#008C15", "#FFC600"] },
-  { name: "Pepsi", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
-  { name: "T-Mobile", colors: ["#E20074", "#FFFFFF"] },
-  { name: "Slack", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E", "#E01E5A"] },
-  { name: "Red Bull", colors: ["#001D4A", "#DB0A40", "#FFCC00", "#C4C4C4"] },
-  { name: "Dunkin'", colors: ["#FF671F", "#DA1884", "#653819"] },
-  { name: "Twitch", colors: ["#9146FF", "#000000"] },
-  { name: "Microsoft", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] }
+  { name: "McDonald's", icon: "mcdonalds", colors: ["#DA291C", "#FFC72C"] },
+  { name: "IKEA", icon: "ikea", colors: ["#0051BA", "#FFDA1A"] },
+  { name: "Spotify", icon: "spotify", colors: ["#1DB954", "#191414"] },
+  { name: "Starbucks", icon: "starbucks", colors: ["#00704A", "#FFFFFF"] },
+  { name: "Target", icon: "target", colors: ["#CC0000", "#FFFFFF"] },
+  { name: "Google", icon: "google", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
+  { name: "Netflix", icon: "netflix", colors: ["#E50914", "#000000"] },
+  { name: "Mastercard", icon: "mastercard", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
+  { name: "FedEx", icon: "fedex", colors: ["#4D148C", "#FF6600"] },
+  { name: "Lego", icon: "lego", colors: ["#D11013", "#FFD500", "#000000"] },
+  { name: "Best Buy", icon: "bestbuy", colors: ["#0046BE", "#FFE000"] },
+  { name: "Subway", icon: "subway", colors: ["#008C15", "#FFC600"] },
+  { name: "Pepsi", icon: "pepsi", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
+  { name: "T-Mobile", icon: "tmobile", colors: ["#E20074", "#FFFFFF"] },
+  { name: "Slack", icon: "slack", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E"] },
+  { name: "Red Bull", icon: "redbull", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
+  { name: "Dunkin'", icon: "dunkin", colors: ["#FF671F", "#DA1884"] },
+  { name: "Twitch", icon: "twitch", colors: ["#9146FF", "#FFFFFF"] },
+  { name: "Microsoft", icon: "microsoft", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
+  { name: "YouTube", icon: "youtube", colors: ["#FF0000", "#282828", "#FFFFFF"] },
+  { name: "Discord", icon: "discord", colors: ["#5865F2", "#FFFFFF"] },
+  { name: "Twitter / X", icon: "x", colors: ["#000000", "#FFFFFF"] }
 ];
 
+const ROUND_TIME_MS = 7000;
 let score = 0;
 let streak = 0;
+let bestStreak = parseInt(localStorage.getItem("huebrand_best_streak") || "0", 10);
 let currentBrand = null;
 let acceptingInput = true;
 let deferredPrompt = null;
 
+let roundStartTime = 0;
+let timerInterval = null;
+
 // Game DOM Elements
-const splotchesEl = document.getElementById("splotches");
+const displayArea = document.getElementById("displayArea");
 const optionsEl = document.getElementById("options");
 const scoreEl = document.getElementById("score");
 const streakEl = document.getElementById("streak");
+const bestStreakEl = document.getElementById("bestStreak");
 const feedbackEl = document.getElementById("feedback");
+const cardLabel = document.getElementById("cardLabel");
+const timerBar = document.getElementById("timerBar");
 
 // Modal DOM Elements
 const settingsModal = document.getElementById("settingsModal");
@@ -44,31 +55,66 @@ const confirmInstallBtn = document.getElementById("confirmInstallBtn");
 const closeInstallPromptBtn = document.getElementById("closeInstallPromptBtn");
 const installInstructionText = document.getElementById("installInstructionText");
 
+bestStreakEl.textContent = bestStreak;
+
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  roundStartTime = performance.now();
+  timerBar.style.width = "100%";
+  timerBar.className = "timer-bar";
+
+  timerInterval = setInterval(() => {
+    const elapsed = performance.now() - roundStartTime;
+    const remaining = Math.max(0, ROUND_TIME_MS - elapsed);
+    const percent = (remaining / ROUND_TIME_MS) * 100;
+
+    timerBar.style.width = `${percent}%`;
+
+    if (percent <= 25) {
+      timerBar.className = "timer-bar danger";
+    } else if (percent <= 50) {
+      timerBar.className = "timer-bar warning";
+    } else {
+      timerBar.className = "timer-bar";
+    }
+
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      handleTimeout();
+    }
+  }, 50);
+}
+
+function stopTimer() {
+  clearInterval(timerInterval);
 }
 
 function nextRound() {
   acceptingInput = true;
   feedbackEl.textContent = "";
   feedbackEl.className = "feedback";
+  cardLabel.textContent = "Brand Color Palette";
 
   currentBrand = BRANDS[Math.floor(Math.random() * BRANDS.length)];
 
   // Render Color Splotches
-  splotchesEl.innerHTML = "";
+  displayArea.innerHTML = "";
   currentBrand.colors.forEach((color) => {
     const dot = document.createElement("div");
     dot.className = "splotch";
     dot.style.backgroundColor = color;
-    splotchesEl.appendChild(dot);
+    displayArea.appendChild(dot);
   });
 
   // Pick 3 random wrong options
   const wrongOptions = shuffle(BRANDS.filter((b) => b.name !== currentBrand.name)).slice(0, 3);
   const roundChoices = shuffle([currentBrand, ...wrongOptions]);
 
-  // Render Buttons
+  // Render Option Buttons
   optionsEl.innerHTML = "";
   roundChoices.forEach((brand) => {
     const btn = document.createElement("button");
@@ -77,24 +123,61 @@ function nextRound() {
     btn.onclick = () => handleChoice(brand.name, btn);
     optionsEl.appendChild(btn);
   });
+
+  startTimer();
+}
+
+function showBrandLogo(brand) {
+  displayArea.innerHTML = "";
+  cardLabel.textContent = brand.name;
+
+  const logoImg = document.createElement("img");
+  logoImg.className = "revealed-logo";
+  logoImg.alt = `${brand.name} logo`;
+  logoImg.src = `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.icon}.svg`;
+  
+  displayArea.appendChild(logoImg);
 }
 
 function handleChoice(selectedName, clickedBtn) {
   if (!acceptingInput) return;
   acceptingInput = false;
+  stopTimer();
 
+  const elapsed = performance.now() - roundStartTime;
   const buttons = optionsEl.querySelectorAll(".btn-option");
+  showBrandLogo(currentBrand);
 
   if (selectedName === currentBrand.name) {
-    score += 10 + streak * 2;
     streak += 1;
+
+    // Speed bonus calculation: answer < 2s = 50 pts, decays linearly down to 0 at 7s
+    let speedBonus = 0;
+    if (elapsed <= 2000) {
+      speedBonus = 50;
+    } else if (elapsed < ROUND_TIME_MS) {
+      const decayRatio = (ROUND_TIME_MS - elapsed) / (ROUND_TIME_MS - 2000);
+      speedBonus = Math.max(0, Math.round(decayRatio * 50));
+    }
+
+    const streakBonus = streak * 25;
+    const pointsWon = 100 + streakBonus + speedBonus;
+    score += pointsWon;
+
+    if (streak > bestStreak) {
+      bestStreak = streak;
+      localStorage.setItem("huebrand_best_streak", bestStreak);
+      bestStreakEl.textContent = bestStreak;
+    }
+
     clickedBtn.classList.add("correct");
-    feedbackEl.textContent = "Correct!";
+    const bonusText = speedBonus > 0 ? ` (+${speedBonus} speed)` : "";
+    feedbackEl.textContent = `+${pointsWon} pts${bonusText} (${streak} streak!)`;
     feedbackEl.className = "feedback correct";
   } else {
     streak = 0;
     clickedBtn.classList.add("wrong");
-    feedbackEl.textContent = `It's ${currentBrand.name}`;
+    feedbackEl.textContent = `Incorrect — It's ${currentBrand.name}`;
     feedbackEl.className = "feedback wrong";
 
     buttons.forEach((btn) => {
@@ -107,22 +190,37 @@ function handleChoice(selectedName, clickedBtn) {
   scoreEl.textContent = score;
   streakEl.textContent = streak;
 
-  setTimeout(nextRound, 1200);
+  setTimeout(nextRound, 1500);
+}
+
+function handleTimeout() {
+  if (!acceptingInput) return;
+  acceptingInput = false;
+
+  streak = 0;
+  scoreEl.textContent = score;
+  streakEl.textContent = streak;
+
+  showBrandLogo(currentBrand);
+
+  const buttons = optionsEl.querySelectorAll(".btn-option");
+  buttons.forEach((btn) => {
+    if (btn.textContent === currentBrand.name) {
+      btn.classList.add("correct");
+    }
+  });
+
+  feedbackEl.textContent = `Time's Up! — It's ${currentBrand.name}`;
+  feedbackEl.className = "feedback wrong";
+
+  setTimeout(nextRound, 1500);
 }
 
 // Modal Listeners
-openSettingsBtn.addEventListener("click", () => {
-  settingsModal.classList.add("active");
-});
-
-closeSettingsBtn.addEventListener("click", () => {
-  settingsModal.classList.remove("active");
-});
-
+openSettingsBtn.addEventListener("click", () => settingsModal.classList.add("active"));
+closeSettingsBtn.addEventListener("click", () => settingsModal.classList.remove("active"));
 settingsModal.addEventListener("click", (e) => {
-  if (e.target === settingsModal) {
-    settingsModal.classList.remove("active");
-  }
+  if (e.target === settingsModal) settingsModal.classList.remove("active");
 });
 
 // PWA Install Handling
@@ -135,11 +233,10 @@ installBtn.addEventListener("click", () => {
   settingsModal.classList.remove("active");
 
   if (deferredPrompt) {
-    installInstructionText.textContent = "Install HUEBRAND directly to your home screen or desktop for fast, offline access.";
+    installInstructionText.textContent = "Install HUEBRAND to your home screen or desktop for fast, offline access.";
     confirmInstallBtn.style.display = "block";
   } else {
-    // Fallback if browser already has it installed or hasn't fired prompt event
-    installInstructionText.textContent = "To install: tap the share/menu icon in your browser and select 'Add to Home Screen' or 'Install App'.";
+    installInstructionText.textContent = "To install: tap your browser menu and choose 'Add to Home Screen' or 'Install App'.";
     confirmInstallBtn.style.display = "none";
   }
 
@@ -149,7 +246,7 @@ installBtn.addEventListener("click", () => {
 confirmInstallBtn.addEventListener("click", async () => {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    await deferredPrompt.userChoice;
     deferredPrompt = null;
   }
   installPromptModal.classList.remove("active");
@@ -160,9 +257,7 @@ closeInstallPromptBtn.addEventListener("click", () => {
 });
 
 installPromptModal.addEventListener("click", (e) => {
-  if (e.target === installPromptModal) {
-    installPromptModal.classList.remove("active");
-  }
+  if (e.target === installPromptModal) installPromptModal.classList.remove("active");
 });
 
 nextRound();
