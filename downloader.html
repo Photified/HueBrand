@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HueBrand Full-Color SVG Bundler</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <style>
+    body { background: #0f172a; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .card { background: #1e293b; border: 1px solid #334155; padding: 32px; border-radius: 16px; max-width: 520px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    button { background: #38bdf8; color: #0f172a; border: none; padding: 14px 28px; font-weight: 800; border-radius: 10px; cursor: pointer; font-size: 1.05rem; margin-top: 20px; transition: background 0.15s; }
+    button:hover { background: #7dd3fc; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    #status { margin-top: 16px; font-size: 0.95rem; color: #94a3b8; font-weight: 600; }
+    #countDisplay { font-size: 1.2rem; font-weight: 800; color: #38bdf8; margin-top: 8px; }
+    .progress-bar { width: 100%; height: 10px; background: #334155; border-radius: 999px; overflow: hidden; margin-top: 18px; display: none; }
+    .fill { height: 100%; width: 0%; background: #38bdf8; transition: width 0.1s; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>HueBrand Full-Color Asset Bundler</h2>
+    <p style="color: #cbd5e1; font-size: 0.9rem; margin-top: 8px;">Downloads 100+ verified multi-color SVGs and zips them for local offline play.</p>
+    <div id="countDisplay">0 / 0 Saved</div>
+    <button id="startBtn">Download Full-Color Logos (.ZIP)</button>
+    <div class="progress-bar" id="pBar"><div class="fill" id="pFill"></div></div>
+    <div id="status">Ready</div>
+  </div>
+
+  <script>
+    const LOGO_DATA = [
+      // Tech, Cloud & Social
+      { id: "google", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/google.svg" },
+      { id: "microsoft", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/microsoft.svg" },
+      { id: "apple", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/apple.svg" },
+      { id: "amazon", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/amazon.svg" },
+      { id: "meta", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/meta.svg" },
+      { id: "youtube", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/youtube.svg" },
+      { id: "spotify", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/spotify.svg" },
+      { id: "netflix", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/netflix.svg" },
+      { id: "discord", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/discord.svg" },
+      { id: "twitch", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/twitch.svg" },
+      { id: "twitter", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/x.svg" },
+      { id: "instagram", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/instagram.svg" },
+      { id: "facebook", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/facebook.svg" },
+      { id: "tiktok", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/tiktok.svg" },
+      { id: "snapchat", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/snapchat.svg" },
+      { id: "reddit", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/reddit.svg" },
+      { id: "pinterest", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/pinterest.svg" },
+      { id: "slack", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/slack.svg" },
+      { id: "linkedin", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/linkedin.svg" },
+      { id: "whatsapp", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/whatsapp.svg" },
+      { id: "telegram", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/telegram.svg" },
+      { id: "dropbox", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/dropbox.svg" },
+      { id: "uber", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/uber.svg" },
+      { id: "airbnb", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/airbnb.svg" },
+      { id: "shopify", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/shopify.svg" },
+      { id: "github", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/github.svg" },
+      { id: "gitlab", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/gitlab.svg" },
+      { id: "figma", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/figma.svg" },
+      { id: "canva", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/canva.svg" },
+      { id: "notion", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/notion.svg" },
+      { id: "trello", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/trello.svg" },
+      { id: "asana", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/asana.svg" },
+      { id: "zoom", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/zoom.svg" },
+      { id: "duolingo", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/duolingo.svg" },
+      { id: "tinder", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/tinder.svg" },
+      { id: "stripe", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/stripe.svg" },
+      { id: "paypal", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/paypal.svg" },
+
+      // Hardware & Gaming
+      { id: "intel", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/intel.svg" },
+      { id: "amd", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/amd.svg" },
+      { id: "nvidia", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/nvidia.svg" },
+      { id: "samsung", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/samsung.svg" },
+      { id: "sony", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/sony.svg" },
+      { id: "lg", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/lg.svg" },
+      { id: "dell", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/dell.svg" },
+      { id: "hp", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/hp.svg" },
+      { id: "lenovo", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/lenovo.svg" },
+      { id: "asus", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/asus.svg" },
+      { id: "logitech", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/logitech.svg" },
+      { id: "razer", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/razer.svg" },
+      { id: "qualcomm", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/qualcomm.svg" },
+      { id: "cisco", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/cisco.svg" },
+      { id: "ibm", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/ibm.svg" },
+      { id: "oracle", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/oracle.svg" },
+      { id: "nokia", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/nokia.svg" },
+      { id: "corsair", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/corsair.svg" },
+      { id: "playstation", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/playstation.svg" },
+      { id: "xbox", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/xbox.svg" },
+      { id: "nintendo", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/nintendo.svg" },
+      { id: "steam", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/steam.svg" },
+      { id: "epicgames", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/epic-games.svg" },
+      { id: "unity", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/unity.svg" },
+      { id: "unrealengine", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/unreal-engine.svg" },
+      { id: "riotgames", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/riot-games.svg" },
+
+      // Food, Drink, Retail, Automotive & Apparel
+      { id: "mcdonalds", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/mcdonalds-icon.svg" },
+      { id: "burgerking", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/burger-king.svg" },
+      { id: "subway", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/subway.svg" },
+      { id: "tacobell", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/taco-bell.svg" },
+      { id: "kfc", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/kfc.svg" },
+      { id: "pizzahut", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/pizza-hut.svg" },
+      { id: "dominos", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/dominos.svg" },
+      { id: "starbucks", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/starbucks.svg" },
+      { id: "dunkin", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/dunkin-icon.svg" },
+      { id: "cocacola", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/coca-cola.svg" },
+      { id: "pepsi", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/pepsi.svg" },
+      { id: "redbull", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/redbull.svg" },
+      { id: "heineken", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/heineken.svg" },
+      { id: "monsterenergy", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/monster.svg" },
+      { id: "ikea", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/ikea.svg" },
+      { id: "target", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/target.svg" },
+      { id: "walmart", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/walmart.svg" },
+      { id: "bestbuy", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/best-buy.svg" },
+      { id: "homedepot", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/home-depot.svg" },
+      { id: "costco", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/costco.svg" },
+      { id: "fedex", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/fedex.svg" },
+      { id: "ups", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/ups.svg" },
+      { id: "dhl", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/dhl.svg" },
+      { id: "lego", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/lego.svg" },
+      { id: "ebay", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/ebay.svg" },
+      { id: "etsy", url: "https://raw.githubusercontent.com/pheralb/svgl/main/static/library/etsy.svg" },
+      { id: "ferrari", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/ferrari.svg" },
+      { id: "porsche", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/porsche.svg" },
+      { id: "bmw", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/bmw.svg" },
+      { id: "mercedes", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/mercedes.svg" },
+      { id: "audi", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/audi.svg" },
+      { id: "ford", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/ford.svg" },
+      { id: "tesla", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/tesla.svg" },
+      { id: "toyota", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/toyota.svg" },
+      { id: "honda", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/honda.svg" },
+      { id: "volkswagen", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/volkswagen.svg" },
+      { id: "nike", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/nike.svg" },
+      { id: "adidas", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/adidas.svg" },
+      { id: "puma", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/puma.svg" },
+      { id: "vans", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/vans.svg" },
+      { id: "mastercard", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/mastercard.svg" },
+      { id: "visa", url: "https://raw.githubusercontent.com/gilbarbara/logos/main/logos/visa.svg" }
+    ];
+
+    const btn = document.getElementById('startBtn');
+    const status = document.getElementById('status');
+    const countDisplay = document.getElementById('countDisplay');
+    const pBar = document.getElementById('pBar');
+    const pFill = document.getElementById('pFill');
+
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      pBar.style.display = 'block';
+      const zip = new JSZip();
+      let successCount = 0;
+
+      for (let i = 0; i < LOGO_DATA.length; i++) {
+        const item = LOGO_DATA[i];
+        status.textContent = `Fetching ${item.id}.svg...`;
+
+        try {
+          const res = await fetch(item.url);
+          if (res.ok) {
+            const svgText = await res.text();
+            if (svgText.includes("<svg")) {
+              zip.file(`${item.id}.svg`, svgText);
+              successCount++;
+            }
+          }
+        } catch (err) {
+          console.warn(`Failed: ${item.id}`);
+        }
+
+        countDisplay.textContent = `${successCount} / ${LOGO_DATA.length} Saved`;
+        pFill.style.width = `${((i + 1) / LOGO_DATA.length) * 100}%`;
+        await sleep(40); // Pacing delay to bypass GitHub rate-limiting
+      }
+
+      status.textContent = "Packaging ZIP archive...";
+      const content = await zip.generateAsync({ type: "blob" });
+      saveAs(content, "brands.zip");
+      status.textContent = `Done! ${successCount} verified full-color SVGs saved into brands.zip.`;
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>
