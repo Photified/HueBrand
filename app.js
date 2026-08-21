@@ -1,5 +1,5 @@
 const BRANDS = [
-  // Fast Food, Dining & Snacks
+  // Fast Food, Casual Dining & Snacks
   { name: "McDonald's", slug: "mcdonalds", colors: ["#DA291C", "#FFC72C"] },
   { name: "Burger King", slug: "burgerking", colors: ["#D62300", "#FBE122", "#502314"] },
   { name: "Subway", slug: "subway", colors: ["#008C15", "#FFC600"] },
@@ -22,7 +22,7 @@ const BRANDS = [
   { name: "Panera Bread", slug: "panerabread", colors: ["#4E5B31", "#C49A45"] },
   { name: "Wingstop", slug: "wingstop", colors: ["#005A36", "#F2C75C"] },
 
-  // Beverages & Packaged Foods
+  // Beverages & Foods
   { name: "Coca-Cola", slug: "cocacola", colors: ["#F40009", "#000000", "#FFFFFF"] },
   { name: "Pepsi", slug: "pepsi", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
   { name: "Red Bull", slug: "redbull", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
@@ -40,8 +40,6 @@ const BRANDS = [
   { name: "Fanta", slug: "fanta", colors: ["#F99B1C", "#004B93", "#3AAA35"] },
   { name: "Pringles", slug: "pringles", colors: ["#E51937", "#FED100", "#4B2E1E"] },
   { name: "Lay's", slug: "lays", colors: ["#FFD100", "#E31B23", "#00629B"] },
-  { name: "Doritos", slug: "doritos", colors: ["#ED1C24", "#FFC72C", "#000000"] },
-  { name: "Cheetos", slug: "cheetos", colors: ["#FF6600", "#000000", "#FFCC00"] },
   { name: "Oreo", slug: "oreo", colors: ["#005BAC", "#000000", "#FFFFFF"] },
   { name: "Kit Kat", slug: "kitkat", colors: ["#D8232A", "#FFFFFF"] },
   { name: "Nutella", slug: "nutella", colors: ["#000000", "#E31B23"] },
@@ -217,7 +215,6 @@ const BRANDS = [
   { name: "Pirelli", slug: "pirelli", colors: ["#FED100", "#D52B1E"] },
   { name: "Bridgestone", slug: "bridgestone", colors: ["#ED1C24", "#000000"] },
   { name: "Goodyear", slug: "goodyear", colors: ["#00338D", "#FED100"] },
-  { name: "Castrol", slug: "castrol", colors: ["#007A3E", "#E31837"] },
   { name: "Shell", slug: "shell", colors: ["#FBCE07", "#DD1D21"] },
   { name: "BP", slug: "bp", colors: ["#007A3D", "#FFDE00"] },
   { name: "Chevron", slug: "chevron", colors: ["#005596", "#E31B23"] },
@@ -414,7 +411,7 @@ function showBrandLogo(brand) {
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
   
-  // Directly loads official monochrome SVG vector from jsDelivr
+  // Directly loads verified monochrome SVG vector from jsDelivr
   logoImg.src = `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.slug}.svg`;
 
   displayArea.appendChild(logoImg);
