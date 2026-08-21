@@ -1,26 +1,26 @@
 const BRANDS = [
-  { name: "McDonald's", icon: "mcdonalds", colors: ["#DA291C", "#FFC72C"] },
-  { name: "IKEA", icon: "ikea", colors: ["#0051BA", "#FFDA1A"] },
-  { name: "Spotify", icon: "spotify", colors: ["#1DB954", "#191414"] },
-  { name: "Starbucks", icon: "starbucks", colors: ["#00704A", "#FFFFFF"] },
-  { name: "Target", icon: "target", colors: ["#CC0000", "#FFFFFF"] },
-  { name: "Google", icon: "google", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
-  { name: "Netflix", icon: "netflix", colors: ["#E50914", "#000000"] },
-  { name: "Mastercard", icon: "mastercard", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
-  { name: "FedEx", icon: "fedex", colors: ["#4D148C", "#FF6600"] },
-  { name: "Lego", icon: "lego", colors: ["#D11013", "#FFD500", "#000000"] },
-  { name: "Best Buy", icon: "bestbuy", colors: ["#0046BE", "#FFE000"] },
-  { name: "Subway", icon: "subway", colors: ["#008C15", "#FFC600"] },
-  { name: "Pepsi", icon: "pepsi", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
-  { name: "T-Mobile", icon: "tmobile", colors: ["#E20074", "#FFFFFF"] },
-  { name: "Slack", icon: "slack", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E"] },
-  { name: "Red Bull", icon: "redbull", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
-  { name: "Dunkin'", icon: "dunkin", colors: ["#FF671F", "#DA1884"] },
-  { name: "Twitch", icon: "twitch", colors: ["#9146FF", "#FFFFFF"] },
-  { name: "Microsoft", icon: "microsoft", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
-  { name: "YouTube", icon: "youtube", colors: ["#FF0000", "#282828", "#FFFFFF"] },
-  { name: "Discord", icon: "discord", colors: ["#5865F2", "#FFFFFF"] },
-  { name: "Twitter / X", icon: "x", colors: ["#000000", "#FFFFFF"] }
+  { name: "McDonald's", domain: "mcdonalds.com", colors: ["#DA291C", "#FFC72C"] },
+  { name: "IKEA", domain: "ikea.com", colors: ["#0051BA", "#FFDA1A"] },
+  { name: "Spotify", domain: "spotify.com", colors: ["#1DB954", "#191414"] },
+  { name: "Starbucks", domain: "starbucks.com", colors: ["#00704A", "#FFFFFF"] },
+  { name: "Target", domain: "target.com", colors: ["#CC0000", "#FFFFFF"] },
+  { name: "Google", domain: "google.com", colors: ["#4285F4", "#EA4335", "#FBBC05", "#34A853"] },
+  { name: "Netflix", domain: "netflix.com", colors: ["#E50914", "#000000"] },
+  { name: "Mastercard", domain: "mastercard.com", colors: ["#EB001B", "#F79E1B", "#FF5F00"] },
+  { name: "FedEx", domain: "fedex.com", colors: ["#4D148C", "#FF6600"] },
+  { name: "Lego", domain: "lego.com", colors: ["#D11013", "#FFD500", "#000000"] },
+  { name: "Best Buy", domain: "bestbuy.com", colors: ["#0046BE", "#FFE000"] },
+  { name: "Subway", domain: "subway.com", colors: ["#008C15", "#FFC600"] },
+  { name: "Pepsi", domain: "pepsi.com", colors: ["#004B93", "#C9002B", "#FFFFFF"] },
+  { name: "T-Mobile", domain: "t-mobile.com", colors: ["#E20074", "#FFFFFF"] },
+  { name: "Slack", domain: "slack.com", colors: ["#4A154B", "#36C5F0", "#2EB67D", "#ECB22E"] },
+  { name: "Red Bull", domain: "redbull.com", colors: ["#001D4A", "#DB0A40", "#FFCC00"] },
+  { name: "Dunkin'", domain: "dunkindonuts.com", colors: ["#FF671F", "#DA1884"] },
+  { name: "Twitch", domain: "twitch.tv", colors: ["#9146FF", "#FFFFFF"] },
+  { name: "Microsoft", domain: "microsoft.com", colors: ["#F25022", "#7FBA00", "#00A4EF", "#FFB900"] },
+  { name: "YouTube", domain: "youtube.com", colors: ["#FF0000", "#282828", "#FFFFFF"] },
+  { name: "Discord", domain: "discord.com", colors: ["#5865F2", "#FFFFFF"] },
+  { name: "Twitter / X", domain: "x.com", colors: ["#000000", "#FFFFFF"] }
 ];
 
 const ROUND_TIME_MS = 7000;
@@ -134,7 +134,10 @@ function showBrandLogo(brand) {
   const logoImg = document.createElement("img");
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
-  logoImg.src = `https://cdn.jsdelivr.net/npm/simple-icons@v11/icons/${brand.icon}.svg`;
+  logoImg.src = `https://logo.clearbit.com/${brand.domain}`;
+  logoImg.onerror = () => {
+    logoImg.src = `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=128`;
+  };
   
   displayArea.appendChild(logoImg);
 }
@@ -151,7 +154,6 @@ function handleChoice(selectedName, clickedBtn) {
   if (selectedName === currentBrand.name) {
     streak += 1;
 
-    // Speed bonus calculation: answer < 2s = 50 pts, decays linearly down to 0 at 7s
     let speedBonus = 0;
     if (elapsed <= 2000) {
       speedBonus = 50;
