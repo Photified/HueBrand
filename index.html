@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HUEBRAND - Guess the Brand</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      width: 100%;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+
+    .brand-header h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #f8fafc;
+    }
+
+    .settings-btn {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .settings-btn:hover {
+      color: #f8fafc;
+      background: #334155;
+    }
+
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      padding: 20px;
+      margin: auto 0;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: #1e293b;
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+
+    .stats span span {
+      color: #38bdf8;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 28px 16px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    .hint-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .splotches {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      min-height: 80px;
+    }
+
+    .splotch {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.4); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .btn-option {
+      background: #334155;
+      color: #f8fafc;
+      border: 2px solid transparent;
+      padding: 14px 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s, border-color 0.15s;
+    }
+
+    .btn-option:active {
+      transform: scale(0.97);
+    }
+
+    .btn-option.correct {
+      background: #065f46 !important;
+      border-color: #10b981 !important;
+      color: #ecfdf5 !important;
+    }
+
+    .btn-option.wrong {
+      background: #881337 !important;
+      border-color: #f43f5e !important;
+      color: #fff1f2 !important;
+    }
+
+    .feedback {
+      height: 24px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .feedback.correct { color: #34d399; }
+    .feedback.wrong { color: #fb7185; }
+
+    /* Modal / Popups */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 50;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 20px 30px rgba(0,0,0,0.5);
+      transform: translateY(20px);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f8fafc;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: #38bdf8;
+      color: #0f172a;
+      border: none;
+      padding: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+
+    .btn-action:hover {
+      background: #7dd3fc;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="brand-header">
+      <img src="images/logo192.png" alt="HueBrand Logo">
+      <h1>HUEBRAND</h1>
+    </div>
+    <button class="settings-btn" id="openSettingsBtn" aria-label="Settings">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Main Game Area -->
+  <main class="container">
+    <div class="stats">
+      <span>Score: <span id="score">0</span></span>
+      <span>Streak: <span id="streak">0</span></span>
+    </div>
+
+    <div class="card">
+      <div class="hint-label">Brand Color Palette</div>
+      <div class="splotches" id="splotches"></div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div class="options-grid" id="options"></div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span class="modal-title">Game Settings</span>
+        <button class="btn-close" id="closeSettingsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <strong>How to Play</strong>
+        <p>Analyze the signature color splotches shown on screen and pick the correct matching brand name from the four options below.</p>
+        <p>Correct guesses build up your streak and earn you multiplier points!</p>
+      </div>
+      <button class="btn-action" id="installBtn">Install App</button>
+    </div>
+  </div>
+
+  <!-- Stylized Install Notification Modal -->
+  <div class="modal-overlay" id="installPromptModal">
+    <div class="modal-box" style="text-align: center; align-items: center;">
+      <img src="images/logo192.png" alt="HueBrand" style="width: 56px; height: 56px; border-radius: 12px;">
+      <div class="modal-title">Install HUEBRAND</div>
+      <p id="installInstructionText" style="font-size: 0.9rem; color: #cbd5e1;">Install this app on your device for offline play and a full-screen experience.</p>
+      <div style="display: flex; gap: 10px; width: 100%;">
+        <button class="btn-action" id="confirmInstallBtn" style="flex: 1;">Install Now</button>
+        <button class="btn-action" id="closeInstallPromptBtn" style="flex: 1; background: #334155; color: #f8fafc;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js');
+      });
+    }
+  </script>
+</body>
+</html>
