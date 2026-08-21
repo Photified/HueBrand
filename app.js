@@ -517,13 +517,13 @@ function nextRound() {
   feedbackEl.className = "feedback";
   cardLabel.textContent = "Brand Color Palette";
 
-  // Filter out brands currently sitting in the 50-turn cooldown queue
+  // Filter out brands currently in cooldown
   const availablePool = BRANDS.filter((b) => !recentHistory.includes(b.name));
   const pool = availablePool.length > 0 ? availablePool : BRANDS;
 
   currentBrand = pool[Math.floor(Math.random() * pool.length)];
 
-  // Add selected brand to the cooldown queue
+  // Push to recent cooldown queue
   recentHistory.push(currentBrand.name);
   if (recentHistory.length > COOLDOWN_LIMIT) {
     recentHistory.shift();
@@ -562,9 +562,11 @@ function showBrandLogo(brand) {
   const logoImg = document.createElement("img");
   logoImg.className = "revealed-logo";
   logoImg.alt = `${brand.name} logo`;
-  logoImg.src = `https://logo.clearbit.com/${brand.domain}`;
+  
+  // High-res logo endpoint pulling vector/HQ assets up to 400px
+  logoImg.src = `https://unavatar.io/${brand.domain}?fallback=https://logo.clearbit.com/${brand.domain}`;
   logoImg.onerror = () => {
-    logoImg.src = `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=128`;
+    logoImg.src = `https://www.google.com/s2/favicons?domain=${brand.domain}&sz=256`;
   };
   
   displayArea.appendChild(logoImg);
